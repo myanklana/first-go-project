@@ -1,0 +1,18 @@
+info:
+  name: adicionar usuario
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/users
+  body:
+    type: text
+    data: Mariana
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
