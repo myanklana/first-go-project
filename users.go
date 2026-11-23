@@ -1,8 +1,8 @@
 package main
 
 type User struct {
-	ID   string
-	Name string
+	ID   string `json:"id"`
+	Name string `json:"Nome"`
 }
 
 // users guarda os usuários indexados pelo ID.

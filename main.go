@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -46,6 +47,22 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Fprintln(w, "usuario criado ")
 		return
+	}
+	if r.Method == "GET" {
+
+		parts := strings.Split(r.URL.Path, "/")
+		if len(parts) == 3 && parts[1] == "users" && parts[2] != "" {
+			id := parts[2]
+			user, ok := users[id]
+			if !ok {
+				http.Error(w, "usuario nao existe", http.StatusNotFound)
+				return
+			}
+			w.Header().Set("Content-type", "application/json")
+			json.NewEncoder(w).Encode(user)
+		}
+		return
+
 	}
 	http.Error(w, "not found", http.StatusNotFound)
 
