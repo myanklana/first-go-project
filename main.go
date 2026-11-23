@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -13,20 +14,24 @@ type server struct {
 	endereco string
 }
 
-var users = map[string]User{}
-
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" && r.URL.Path == "/users" {
 		w.WriteHeader(200)
-		for id, user := range users {
-			fmt.Fprintln(w, id, user.Name)
+		for _, user := range users {
+			fmt.Fprintln(w, user.Name)
 		}
+		return
 	}
 
 	if r.Method == "POST" && r.URL.Path == "/users" {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			log.Println(err)
+			return
+		}
+		name := strings.TrimSpace(string(body))
+		if name == "" {
+			http.Error(w, "nome nao pode ser nulo", http.StatusBadRequest)
 			return
 		}
 		newId := uuid.New().String()
@@ -40,7 +45,9 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 
 		fmt.Fprintln(w, "usuario criado ")
+		return
 	}
+	http.Error(w, "not found", http.StatusNotFound)
 
 }
 
