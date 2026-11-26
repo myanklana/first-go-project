@@ -5,6 +5,10 @@ type User struct {
 	Name string `json:"Nome"`
 }
 
+type UserRequest struct {
+	Name string `json:"Nome"`
+}
+
 // users guarda os usuários indexados pelo ID.
 // Começa com 10 usuários de mock.
 var users = map[string]User{

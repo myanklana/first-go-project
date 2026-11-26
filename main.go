@@ -17,10 +17,13 @@ type server struct {
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" && r.URL.Path == "/users" {
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(200)
+		usersList := []User{}
 		for _, user := range users {
-			fmt.Fprintln(w, user.Name)
+			usersList = append(usersList, user)
 		}
+		json.NewEncoder(w).Encode(usersList)
 		return
 	}
 
@@ -30,6 +33,11 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
+
+		var req UserRequest
+
+		json.NewDecoder(r.Body).Decode(&req)
+
 		name := strings.TrimSpace(string(body))
 		if name == "" {
 			http.Error(w, "nome nao pode ser nulo", http.StatusBadRequest)
